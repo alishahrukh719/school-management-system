@@ -1,0 +1,1350 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>School Management System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f172a;--navy2:#1e293b;--navy3:#334155;
+  --accent:#6366f1;--accent2:#818cf8;--accent3:#e0e7ff;
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;
+  --text:#f1f5f9;--text2:#94a3b8;--text3:#64748b;
+  --card:#1e293b;--border:#334155;
+  --sidebar-w:220px;
+  font-family:'DM Sans',sans-serif;
+}
+body{background:var(--navy);color:var(--text);min-height:600px;display:flex;flex-direction:column}
+.app{display:flex;height:100vh;min-height:600px;overflow:hidden}
+
+/* Sidebar */
+.sidebar{width:var(--sidebar-w);background:var(--navy2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .2s}
+.logo{padding:20px 16px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.logo-icon{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-text{font-size:14px;font-weight:600;color:var(--text);line-height:1.2}
+.logo-sub{font-size:11px;color:var(--text3)}
+.nav{flex:1;overflow-y:auto;padding:8px 0}
+.nav-section{padding:8px 16px 4px;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 16px;font-size:13px;color:var(--text2);cursor:pointer;border-radius:0;transition:all .15s;position:relative}
+.nav-item:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.nav-item.active{color:var(--accent2);background:rgba(99,102,241,.12)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-item i{width:18px;text-align:center;font-size:16px}
+.badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:1px 6px;border-radius:20px}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--navy2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:16px;height:58px;flex-shrink:0}
+.topbar-title{font-size:17px;font-weight:600;flex:1}
+.topbar-search{background:var(--navy3);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-size:13px;color:var(--text);font-family:inherit;width:220px;outline:none}
+.topbar-search:focus{border-color:var(--accent)}
+.avatar{width:34px;height:34px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer}
+.role-badge{background:rgba(99,102,241,.2);color:var(--accent2);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+
+/* Content */
+.content{flex:1;overflow-y:auto;padding:24px}
+
+/* Stat cards */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 16px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s}
+.stat-card:hover{transform:translateY(-2px);border-color:var(--text3)}
+.stat-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
+.stat-num{font-size:26px;font-weight:600;line-height:1}
+.stat-label{font-size:12px;color:var(--text3);margin-top:4px}
+.stat-trend{position:absolute;top:14px;right:14px;font-size:11px;font-weight:500;padding:2px 7px;border-radius:20px}
+.up{background:rgba(34,197,94,.15);color:var(--green)}
+.down{background:rgba(239,68,68,.15);color:var(--red)}
+
+/* Tables */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:15px;font-weight:600}
+.btn{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#4f46e5}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-outline:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:6px}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.btn-success{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:rgba(255,255,255,.04)}
+th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+td{padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.025)}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.pill-green{background:rgba(34,197,94,.15);color:var(--green)}
+.pill-amber{background:rgba(245,158,11,.15);color:var(--amber)}
+.pill-red{background:rgba(239,68,68,.15);color:var(--red)}
+.pill-blue{background:rgba(59,130,246,.15);color:var(--blue)}
+.pill-purple{background:rgba(168,85,247,.15);color:var(--purple)}
+.avatar-sm{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.td-user{display:flex;align-items:center;gap:9px}
+.td-name{font-weight:500;font-size:13px}
+.td-sub{font-size:11px;color:var(--text3)}
+
+/* Chart bars */
+.chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:24px}
+.chart-title{font-size:14px;font-weight:600;margin-bottom:16px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:100px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar{width:100%;border-radius:4px 4px 0 0;transition:opacity .2s;cursor:pointer;min-width:12px}
+.bar:hover{opacity:.8}
+.bar-label{font-size:10px;color:var(--text3)}
+.bar-val{font-size:10px;color:var(--text2);font-weight:500}
+
+/* Attendance grid */
+.att-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:12px}
+.att-day{aspect-ratio:1;border-radius:3px;cursor:pointer;transition:transform .1s}
+.att-day:hover{transform:scale(1.15)}
+.att-p{background:rgba(34,197,94,.7)}
+.att-a{background:rgba(239,68,68,.5)}
+.att-h{background:rgba(245,158,11,.5)}
+.att-none{background:var(--border)}
+
+/* Forms */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:12px;font-weight:500;color:var(--text2)}
+.form-input{background:var(--navy3);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:13px;color:var(--text);font-family:inherit;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--accent)}
+.form-select{background:var(--navy3);border:1px solid var(--border);border-radius:7px;padding:8px 11px;font-size:13px;color:var(--text);font-family:inherit;outline:none}
+.form-full{grid-column:1/-1}
+
+/* Modal overlay */
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+.modal{background:var(--navy2);border:1px solid var(--border);border-radius:14px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-title{font-size:16px;font-weight:600}
+.modal-close{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:4px;border-radius:6px}
+.modal-close:hover{color:var(--text);background:rgba(255,255,255,.06)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* Two-col layout */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+
+/* Notice card */
+.notice-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+.notice-card:hover{border-color:var(--text3)}
+.notice-card-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.notice-title{font-size:14px;font-weight:500}
+.notice-body{font-size:12px;color:var(--text3);line-height:1.5}
+
+/* Fee progress */
+.fee-bar-wrap{margin-bottom:12px}
+.fee-bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;color:var(--text2)}
+.fee-bar-track{background:var(--navy3);border-radius:99px;height:7px;overflow:hidden}
+.fee-bar-fill{height:100%;border-radius:99px;transition:width .5s}
+
+/* Hidden */
+.hidden{display:none!important}
+.page{display:none}
+.page.active{display:block}
+.app-wrap{position:relative;height:100%;width:100%}
+</style>
+
+<div class="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">Zee«</div>
+      <div><div class="logo-text">EduManage</div><div class="logo-sub">School System</div></div>
+    </div>
+    <div class="nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" onclick="goto('dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+      <div class="nav-item" onclick="goto('students',this)"><i class="ti ti-users"></i> Students <span class="badge">248</span></div>
+      <div class="nav-item" onclick="goto('teachers',this)"><i class="ti ti-school"></i> Teachers</div>
+      <div class="nav-item" onclick="goto('classes',this)"><i class="ti ti-door"></i> Classes</div>
+      <div class="nav-item" onclick="goto('subjects',this)"><i class="ti ti-book"></i> Subjects</div>
+      <div class="nav-section">Academic</div>
+      <div class="nav-item" onclick="goto('attendance',this)"><i class="ti ti-calendar-check"></i> Attendance</div>
+      <div class="nav-item" onclick="goto('exams',this)"><i class="ti ti-file-certificate"></i> Exams & Results</div>
+      <div class="nav-item" onclick="goto('fees',this)"><i class="ti ti-currency-rupee"></i> Fees</div>
+      <div class="nav-section">Communication</div>
+      <div class="nav-item" onclick="goto('notices',this)"><i class="ti ti-bell"></i> Notice Board <span class="badge">3</span></div>
+      <div class="nav-item" onclick="goto('settings',this)"><i class="ti ti-settings"></i> Settings</div>
+    </div>
+  </div>
+
+  <!-- Main area -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <input class="topbar-search" placeholder="Search students, teachersâ€¦" oninput="handleSearch(this.value)">
+      <div class="role-badge">Admin</div>
+      <div class="avatar">SSA</div>
+    </div>
+    <div class="content" style="position:relative">
+      <div id="modal-root"></div>
+
+      <!-- Dashboard -->
+      <div id="page-dashboard" class="page active">
+        <div class="stats-grid">
+          <div class="stat-card" onclick="goto('students',document.querySelector('.nav-item:nth-child(4)'))">
+            <div class="stat-icon" style="background:rgba(99,102,241,.15);color:var(--accent2)"><i class="ti ti-users"></i></div>
+            <div class="stat-num">248</div><div class="stat-label">Total Students</div>
+            <div class="stat-trend up">â†‘ 12</div>
+          </div>
+          <div class="stat-card" onclick="goto('teachers',document.querySelector('.nav-item:nth-child(5)'))">
+            <div class="stat-icon" style="background:rgba(34,197,94,.15);color:var(--green)"><i class="ti ti-school"></i></div>
+            <div class="stat-num">32</div><div class="stat-label">Total Teachers</div>
+            <div class="stat-trend up">â†‘ 2</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(245,158,11,.15);color:var(--amber)"><i class="ti ti-door"></i></div>
+            <div class="stat-num">18</div><div class="stat-label">Total Classes</div>
+            <div class="stat-trend up">â†‘ 1</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(59,130,246,.15);color:var(--blue)"><i class="ti ti-book"></i></div>
+            <div class="stat-num">24</div><div class="stat-label">Subjects</div>
+            <div class="stat-trend up">â†‘ 3</div>
+          </div>
+          <div class="stat-card" onclick="goto('attendance',document.querySelector('#page-dashboard'))">
+            <div class="stat-icon" style="background:rgba(34,197,94,.15);color:var(--green)"><i class="ti ti-calendar-check"></i></div>
+            <div class="stat-num">91%</div><div class="stat-label">Attendance Today</div>
+            <div class="stat-trend down">â†“ 2%</div>
+          </div>
+          <div class="stat-card" onclick="goto('fees',document.querySelector('#page-dashboard'))">
+            <div class="stat-icon" style="background:rgba(168,85,247,.15);color:var(--purple)"><i class="ti ti-currency-rupee"></i></div>
+            <div class="stat-num">â‚¹4.2L</div><div class="stat-label">Fees Collected</div>
+            <div class="stat-trend up">â†‘ 8%</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="chart-wrap">
+              <div class="chart-title">Monthly Attendance (%)</div>
+              <div class="bars" id="att-chart"></div>
+            </div>
+            <div class="section-header">
+              <div class="section-title">Recent Enrollments</div>
+              <button class="btn btn-outline btn-sm" onclick="goto('students',document.querySelector('.nav-item:nth-child(4)'))">View all</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Student</th><th>Class</th><th>Status</th></tr></thead>
+                <tbody id="recent-students"></tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="chart-wrap">
+              <div class="chart-title">Fee Collection (â‚¹ lakhs)</div>
+              <div class="bars" id="fee-chart"></div>
+            </div>
+            <div class="section-header">
+              <div class="section-title">Upcoming Exams</div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Exam</th><th>Class</th><th>Date</th></tr></thead>
+                <tbody>
+                  <tr><td>Math Mid-Term</td><td><span class="pill pill-blue">Class 10</span></td><td style="color:var(--amber)">Jun 5</td></tr>
+                  <tr><td>Science Test</td><td><span class="pill pill-blue">Class 9</span></td><td style="color:var(--amber)">Jun 7</td></tr>
+                  <tr><td>English Final</td><td><span class="pill pill-purple">Class 12</span></td><td style="color:var(--red)">Jun 10</td></tr>
+                  <tr><td>History Quiz</td><td><span class="pill pill-green">Class 8</span></td><td style="color:var(--green)">Jun 14</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Students -->
+      <div id="page-students" class="page">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Student Management</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px">Manage all enrolled students</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <select class="form-select btn-sm" style="padding:6px 10px;font-size:12px" onchange="filterStudents(this.value)">
+              <option value="">All Classes</option>
+              <option>Class 8</option><option>Class 9</option><option>Class 10</option>
+              <option>Class 11</option><option>Class 12</option>
+            </select>
+            <button class="btn btn-primary" onclick="openAddStudent()"><i class="ti ti-plus"></i> Add Student</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Roll No</th><th>Class</th><th>Contact</th><th>Attendance</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="student-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Teachers -->
+      <div id="page-teachers" class="page">
+        <div class="section-header">
+          <div class="section-title">Teacher Management</div>
+          <button class="btn btn-primary" onclick="openAddTeacher()"><i class="ti ti-plus"></i> Add Teacher</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Teacher</th><th>Employee ID</th><th>Subject</th><th>Classes</th><th>Experience</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="teacher-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Classes -->
+      <div id="page-classes" class="page">
+        <div class="section-header">
+          <div class="section-title">Class Management</div>
+          <button class="btn btn-primary" onclick="openAddClass()"><i class="ti ti-plus"></i> Add Class</button>
+        </div>
+        <div class="stats-grid" id="class-cards"></div>
+      </div>
+
+      <!-- Subjects -->
+      <div id="page-subjects" class="page">
+        <div class="section-header">
+          <div class="section-title">Subject Management</div>
+          <button class="btn btn-primary" onclick="openAddSubject()"><i class="ti ti-plus"></i> Add Subject</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Subject</th><th>Code</th><th>Teacher</th><th>Classes</th><th>Type</th><th>Actions</th></tr></thead>
+            <tbody id="subject-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Attendance -->
+      <div id="page-attendance" class="page">
+        <div class="section-header">
+          <div class="section-title">Attendance Management</div>
+          <div style="display:flex;gap:8px">
+            <select class="form-select" style="padding:6px 10px;font-size:12px">
+              <option>Class 10-A</option><option>Class 9-B</option><option>Class 11-A</option>
+            </select>
+            <input type="date" class="form-input" style="padding:6px 10px;font-size:12px;width:auto" value="2026-05-31">
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="chart-wrap">
+              <div class="chart-title">Today's Attendance â€” Class 10-A (35 students)</div>
+              <div style="display:flex;gap:10px;margin-bottom:14px">
+                <div style="flex:1;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);border-radius:8px;padding:10px;text-align:center">
+                  <div style="font-size:22px;font-weight:600;color:var(--green)">31</div>
+                  <div style="font-size:11px;color:var(--text3)">Present</div>
+                </div>
+                <div style="flex:1;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:10px;text-align:center">
+                  <div style="font-size:22px;font-weight:600;color:var(--red)">3</div>
+                  <div style="font-size:11px;color:var(--text3)">Absent</div>
+                </div>
+                <div style="flex:1;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:10px;text-align:center">
+                  <div style="font-size:22px;font-weight:600;color:var(--amber)">1</div>
+                  <div style="font-size:11px;color:var(--text3)">Holiday</div>
+                </div>
+              </div>
+              <div class="chart-title" style="margin-bottom:8px;font-size:12px">Monthly Calendar (May 2026)</div>
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px">
+                <div style="font-size:9px;color:var(--text3);text-align:center;padding:2px" *ngFor="let d of ['S','M','T','W','T','F','S']">S</div>
+                <div style="font-size:9px;color:var(--text3);text-align:center;padding:2px">M</div>
+                <div style="font-size:9px;color:var(--text3);text-align:center;padding:2px">T</div>
+                <div style="font-size:9px;color:var(--text3);text-align:center;padding:2px">W</div>
+                <div style="font-size:9px;color:var(--text3);text-align:center;padding:2px">T</div>
+                <div style="font-size:9px;color:var(--text3);text-align:center;padding:2px">F</div>
+                <div style="font-size:9px;color:var(--text3);text-align:center;padding:2px">S</div>
+              </div>
+              <div class="att-grid" id="att-cal"></div>
+            </div>
+          </div>
+          <div>
+            <div class="section-header"><div class="section-title" style="font-size:13px">Mark Attendance</div><button class="btn btn-primary btn-sm" onclick="saveAttendance()">Save</button></div>
+            <div class="table-wrap" style="max-height:320px;overflow-y:auto">
+              <table>
+                <thead><tr><th>Student</th><th>Status</th></tr></thead>
+                <tbody id="att-mark-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exams -->
+      <div id="page-exams" class="page">
+        <div class="section-header">
+          <div class="section-title">Examination Module</div>
+          <button class="btn btn-primary" onclick="openAddExam()"><i class="ti ti-plus"></i> Create Exam</button>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="chart-wrap">
+              <div class="chart-title">Class 10-A â€” Math Mid-Term Results</div>
+              <div class="bars" id="exam-chart"></div>
+            </div>
+          </div>
+          <div>
+            <div class="chart-wrap" style="padding:14px 16px">
+              <div class="chart-title">Grade Distribution</div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px" id="grade-dist"></div>
+            </div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Exam</th><th>Marks</th><th>Grade</th><th>Result</th></tr></thead>
+            <tbody id="exam-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Fees -->
+      <div id="page-fees" class="page">
+        <div class="section-header">
+          <div class="section-title">Fee Management</div>
+          <button class="btn btn-primary" onclick="openAddFee()"><i class="ti ti-plus"></i> Record Payment</button>
+        </div>
+        <div class="stats-grid" style="margin-bottom:18px">
+          <div class="stat-card"><div class="stat-icon" style="background:rgba(34,197,94,.15);color:var(--green)"><i class="ti ti-check"></i></div><div class="stat-num">â‚¹4.2L</div><div class="stat-label">Collected</div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:rgba(239,68,68,.15);color:var(--red)"><i class="ti ti-clock"></i></div><div class="stat-num">â‚¹1.8L</div><div class="stat-label">Pending</div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:rgba(245,158,11,.15);color:var(--amber)"><i class="ti ti-users"></i></div><div class="stat-num">42</div><div class="stat-label">Defaulters</div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:rgba(99,102,241,.15);color:var(--accent2)"><i class="ti ti-currency-rupee"></i></div><div class="stat-num">â‚¹6L</div><div class="stat-label">Total Expected</div></div>
+        </div>
+        <div class="two-col" style="margin-bottom:18px">
+          <div class="chart-wrap">
+            <div class="chart-title">Fee Collection by Class</div>
+            <div id="fee-progress"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Student</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+              <tbody id="fee-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notices -->
+      <div id="page-notices" class="page">
+        <div class="section-header">
+          <div class="section-title">Notice Board</div>
+          <button class="btn btn-primary" onclick="openAddNotice()"><i class="ti ti-plus"></i> Post Notice</button>
+        </div>
+        <div id="notice-list"></div>
+      </div>
+
+      <!-- Settings -->
+      <div id="page-settings" class="page">
+        <div class="section-title" style="margin-bottom:18px">School Settings</div>
+        <div class="two-col">
+          <div class="chart-wrap">
+            <div class="chart-title">School Profile</div>
+            <div class="form-grid" style="margin-top:12px">
+              <div class="form-group form-full"><div class="form-label">School Name</div><input class="form-input" value="Delhi Public School"></div>
+              <div class="form-group"><div class="form-label">Board</div><select class="form-select"><option>CBSE</option><option>ICSE</option><option>State Board</option></select></div>
+              <div class="form-group"><div class="form-label">Academic Year</div><input class="form-input" value="2025-2026"></div>
+              <div class="form-group form-full"><div class="form-label">Address</div><input class="form-input" value="Sector 15, Dwarka, New Delhi â€” 110075"></div>
+              <div class="form-group"><div class="form-label">Principal</div><input class="form-input" value="Dr. Sunita Sharma"></div>
+              <div class="form-group"><div class="form-label">Phone</div><input class="form-input" value="+91 11 2345 6789"></div>
+            </div>
+            <div style="margin-top:14px"><button class="btn btn-primary">Save Settings</button></div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-title">API Configuration</div>
+            <div class="form-grid" style="margin-top:12px">
+              <div class="form-group form-full"><div class="form-label">Backend Base URL</div><input class="form-input" value="/api"></div>
+              <div class="form-group"><div class="form-label">JWT Expiry (hours)</div><input class="form-input" type="number" value="24"></div>
+              <div class="form-group"><div class="form-label">Max Requests/min</div><input class="form-input" type="number" value="100"></div>
+            </div>
+            <div style="margin-top:14px;display:flex;gap:8px">
+              <button class="btn btn-primary btn-sm">Test Connection</button>
+              <button class="btn btn-outline btn-sm">Reset</button>
+            </div>
+            <div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:10px;margin-top:12px;font-size:12px;color:var(--green)">
+              <i class="ti ti-wifi"></i> Connected to Spring Boot API
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const colors=['#6366f1','#22c55e','#f59e0b','#3b82f6','#a855f7','#ef4444','#ec4899'];
+const avatarColors=['#6366f1','#22c55e','#f59e0b','#3b82f6','#a855f7','#ef4444','#ec4899'];
+
+let students=[
+  {id:1,name:'Aarav Sharma',roll:'S-001',cls:'Class 10-A',contact:'9876543210',att:94,status:'Active',gender:'M'},
+  {id:2,name:'Priya Patel',roll:'S-002',cls:'Class 10-A',contact:'9876543211',att:88,status:'Active',gender:'F'},
+  {id:3,name:'Rohan Gupta',roll:'S-003',cls:'Class 9-B',contact:'9876543212',att:76,status:'Active',gender:'M'},
+  {id:4,name:'Sneha Verma',roll:'S-004',cls:'Class 11-A',contact:'9876543213',att:91,status:'Active',gender:'F'},
+  {id:5,name:'Arjun Singh',roll:'S-005',cls:'Class 12-B',contact:'9876543214',att:82,status:'Active',gender:'M'},
+  {id:6,name:'Kavya Reddy',roll:'S-006',cls:'Class 8-A',contact:'9876543215',att:95,status:'Active',gender:'F'},
+  {id:7,name:'Vikram Nair',roll:'S-007',cls:'Class 10-B',contact:'9876543216',att:71,status:'Suspended',gender:'M'},
+  {id:8,name:'Ananya Joshi',roll:'S-008',cls:'Class 9-A',contact:'9876543217',att:89,status:'Active',gender:'F'},
+];
+const teachers=[
+  {id:1,name:'Dr. Rajeev Kumar',eid:'T-001',subject:'Mathematics',classes:'9A,10A,11A',exp:'12 yrs',status:'Active'},
+  {id:2,name:'Mrs. Sunita Mehta',eid:'T-002',subject:'English',classes:'8A,9B,12A',exp:'8 yrs',status:'Active'},
+  {id:3,name:'Mr. Ajay Tiwari',eid:'T-003',subject:'Physics',classes:'11A,11B,12A',exp:'15 yrs',status:'Active'},
+  {id:4,name:'Ms. Pooja Bhat',eid:'T-004',subject:'Chemistry',classes:'11B,12B',exp:'6 yrs',status:'On Leave'},
+  {id:5,name:'Mr. Ravi Shankar',eid:'T-005',subject:'History',classes:'8A,8B,9A',exp:'10 yrs',status:'Active'},
+];
+const subjects=[
+  {name:'Mathematics',code:'MATH-01',teacher:'Dr. Rajeev Kumar',classes:'8,9,10,11,12',type:'Core'},
+  {name:'Physics',code:'PHY-01',teacher:'Mr. Ajay Tiwari',classes:'11,12',type:'Core'},
+  {name:'Chemistry',code:'CHEM-01',teacher:'Ms. Pooja Bhat',classes:'11,12',type:'Core'},
+  {name:'English Language',code:'ENG-01',teacher:'Mrs. Sunita Mehta',classes:'8,9,10,11,12',type:'Core'},
+  {name:'History',code:'HIST-01',teacher:'Mr. Ravi Shankar',classes:'8,9',type:'Elective'},
+  {name:'Computer Science',code:'CS-01',teacher:'TBA',classes:'11,12',type:'Elective'},
+];
+const notices=[
+  {title:'Annual Sports Day',body:'Annual Sports Day will be held on June 15, 2026. All students are encouraged to participate. Registration open until June 8.',category:'Event',date:'May 30, 2026',urgent:true},
+  {title:'Mid-Term Examination Schedule',body:'Mid-term examinations will commence from June 5. Students should report by 8:30 AM. Hall tickets issued to class teachers.',category:'Academic',date:'May 28, 2026',urgent:false},
+  {title:'Parent-Teacher Meeting',body:'PTM scheduled for June 20. Parents are requested to meet subject teachers between 9 AM and 12 PM.',category:'Meeting',date:'May 25, 2026',urgent:false},
+];
+const attMonths=['Jan','Feb','Mar','Apr','May','Jun'];
+const attValues=[88,91,85,93,91,0];
+const feeVals=[0.8,1.1,0.9,1.2,0.9,0.3];
+const examScores=[72,85,63,91,78,55,88,94,67,80];
+const API_BASE='/api/students';
+
+function initials(n){return n.split(' ').slice(0,2).map(x=>x[0]).join('')}
+
+function avColor(i){return avatarColors[i%avatarColors.length]}
+
+function statusPill(s){
+  if(s==='Active'||s==='Pass'||s==='Present') return `<span class="pill pill-green">${s}</span>`;
+  if(s==='Suspended'||s==='Fail'||s==='Absent') return `<span class="pill pill-red">${s}</span>`;
+  if(s==='On Leave'||s==='Holiday') return `<span class="pill pill-amber">${s}</span>`;
+  return `<span class="pill pill-blue">${s}</span>`;
+}
+
+function studentFromApi(s,i){
+  return {
+    id:String(s.id),
+    name:s.name||'Unnamed Student',
+    email:s.email||'',
+    roll:String(s.id),
+    cls:'Class 10-A',
+    contact:s.email||'--',
+    att:90,
+    status:'Active',
+    gender:i%2===0?'M':'F'
+  };
+}
+
+function showToast(message,ok=true){
+  const toast=document.createElement('div');
+  toast.style.cssText=`position:fixed;bottom:20px;right:20px;background:${ok?'#22c55e':'#ef4444'};color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:9999;font-family:DM Sans,sans-serif`;
+  toast.textContent=message;
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),2500);
+}
+
+async function apiRequest(url,options){
+  const res=await fetch(url,options);
+  if(!res.ok){
+    let msg=`Request failed: ${res.status}`;
+    try{const err=await res.json();msg=err.message||err.error||msg;}catch(e){}
+    throw new Error(msg);
+  }
+  if(res.status===204)return null;
+  return res.json();
+}
+
+async function loadStudents(){
+  try{
+    const data=await apiRequest(API_BASE);
+    students=data.map(studentFromApi);
+    renderStudents(students);
+    renderRecentStudents();
+    updateStudentStats();
+  }catch(err){
+    showToast('Backend not connected: '+err.message,false);
+    renderStudents(students);
+  }
+}
+
+function updateStudentStats(){
+  const totalCard=document.querySelector('#page-dashboard .stat-card .stat-num');
+  if(totalCard)totalCard.textContent=students.length;
+  const badge=document.querySelector('.nav-item .badge');
+  if(badge)badge.textContent=students.length;
+}
+
+function renderStudents(list){
+  document.getElementById('student-table').innerHTML=list.map((s,i)=>`
+    <tr>
+      <td><div class="td-user"><div class="avatar-sm" style="background:${avColor(i)}">${initials(s.name)}</div><div><div class="td-name">${s.name}</div><div class="td-sub">${s.gender==='M'?'Male':'Female'}</div></div></div></td>
+      <td style="color:var(--text3);font-family:monospace;font-size:12px">${s.roll}</td>
+      <td><span class="pill pill-blue">${s.cls}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${s.contact}</td>
+      <td><span style="color:${s.att>=85?'var(--green)':s.att>=75?'var(--amber)':'var(--red)'};font-weight:500">${s.att}%</span></td>
+      <td>${statusPill(s.status)}</td>
+      <td><div style="display:flex;gap:5px">
+        <button class="btn btn-outline btn-sm" onclick="editStudent('${s.id}')"><i class="ti ti-edit"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')"><i class="ti ti-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderTeachers(){
+  document.getElementById('teacher-table').innerHTML=teachers.map((t,i)=>`
+    <tr>
+      <td><div class="td-user"><div class="avatar-sm" style="background:${avColor(i+3)}">${initials(t.name)}</div><div><div class="td-name">${t.name}</div></div></div></td>
+      <td style="font-size:12px;color:var(--text3);font-family:monospace">${t.eid}</td>
+      <td><span class="pill pill-purple">${t.subject}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${t.classes}</td>
+      <td style="font-size:12px;color:var(--text2)">${t.exp}</td>
+      <td>${statusPill(t.status)}</td>
+      <td><div style="display:flex;gap:5px">
+        <button class="btn btn-outline btn-sm"><i class="ti ti-edit"></i></button>
+        <button class="btn btn-danger btn-sm"><i class="ti ti-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderSubjects(){
+  document.getElementById('subject-table').innerHTML=subjects.map(s=>`
+    <tr>
+      <td><div class="td-name">${s.name}</div></td>
+      <td style="font-size:12px;color:var(--text3);font-family:monospace">${s.code}</td>
+      <td style="font-size:12px;color:var(--text2)">${s.teacher}</td>
+      <td style="font-size:12px;color:var(--text3)">Class ${s.classes}</td>
+      <td><span class="pill ${s.type==='Core'?'pill-blue':'pill-amber'}">${s.type}</span></td>
+      <td><div style="display:flex;gap:5px">
+        <button class="btn btn-outline btn-sm"><i class="ti ti-edit"></i></button>
+        <button class="btn btn-danger btn-sm"><i class="ti ti-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderClasses(){
+  const cls=[
+    {name:'Class 8-A',teacher:'Mr. Ravi Shankar',students:42,room:'R-101'},
+    {name:'Class 9-B',teacher:'Mrs. Sunita Mehta',students:38,room:'R-205'},
+    {name:'Class 10-A',teacher:'Dr. Rajeev Kumar',students:35,room:'R-310'},
+    {name:'Class 11-A',teacher:'Mr. Ajay Tiwari',students:30,room:'R-401'},
+    {name:'Class 12-B',teacher:'Ms. Pooja Bhat',students:28,room:'R-502'},
+    {name:'Class 9-A',teacher:'TBA',students:40,room:'R-204'},
+  ];
+  document.getElementById('class-cards').innerHTML=cls.map((c,i)=>`
+    <div class="stat-card" style="padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:14px;font-weight:600">${c.name}</div>
+        <span class="pill pill-blue">Room ${c.room.split('-')[1]}</span>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">${c.teacher}</div>
+      <div style="font-size:22px;font-weight:600;margin-bottom:2px">${c.students}</div>
+      <div style="font-size:11px;color:var(--text3)">Students</div>
+    </div>`).join('');
+}
+
+function renderAttCal(){
+  const cal=document.getElementById('att-cal');
+  const types=['att-none','att-p','att-p','att-p','att-a','att-p','att-h','att-p','att-p','att-p','att-p','att-a','att-p','att-p','att-p','att-p','att-p','att-p','att-p','att-a','att-p','att-none','att-none','att-p','att-p','att-p','att-p','att-p','att-p','att-p','att-p'];
+  cal.innerHTML=types.map((t,i)=>`<div class="att-day ${t}" title="Day ${i+1}"></div>`).join('');
+}
+
+function renderAttMarkTable(){
+  document.getElementById('att-mark-table').innerHTML=students.slice(0,6).map((s,i)=>`
+    <tr>
+      <td><div class="td-user"><div class="avatar-sm" style="background:${avColor(i)}">${initials(s.name)}</div><div class="td-name">${s.name}</div></div></td>
+      <td>
+        <select class="form-select" style="padding:4px 8px;font-size:12px">
+          <option value="P" ${i!==2&&i!==5?'selected':''}>Present</option>
+          <option value="A" ${i===2||i===5?'selected':''}>Absent</option>
+          <option value="H">Holiday</option>
+        </select>
+      </td>
+    </tr>`).join('');
+}
+
+function renderExams(){
+  const scores=examScores;
+  const grades=['B','A','C','A+','B+','D','A','A+','C+','B+'];
+  document.getElementById('exam-table').innerHTML=students.map((s,i)=>{
+    const mark=scores[i]||65;const g=grades[i]||'B';
+    return `<tr>
+      <td><div class="td-user"><div class="avatar-sm" style="background:${avColor(i)}">${initials(s.name)}</div><div class="td-name">${s.name}</div></div></td>
+      <td style="font-size:12px">Math Mid-Term</td>
+      <td><span style="font-weight:600;color:${mark>=75?'var(--green)':mark>=50?'var(--amber)':'var(--red)'}">${mark}/100</span></td>
+      <td><span class="pill pill-${mark>=75?'green':mark>=50?'amber':'red'}">${g}</span></td>
+      <td>${statusPill(mark>=33?'Pass':'Fail')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderGradeDist(){
+  const data=[{g:'A+/A',n:3,c:'#22c55e'},{g:'B+/B',n:4,c:'#6366f1'},{g:'C+/C',n:2,c:'#f59e0b'},{g:'D/Fail',n:1,c:'#ef4444'}];
+  document.getElementById('grade-dist').innerHTML=data.map(d=>`
+    <div class="fee-bar-wrap">
+      <div class="fee-bar-label"><span>${d.g}</span><span>${d.n} students</span></div>
+      <div class="fee-bar-track"><div class="fee-bar-fill" style="width:${d.n/10*100}%;background:${d.c}"></div></div>
+    </div>`).join('');
+}
+
+function renderFees(){
+  const feeData=[
+    {student:'Aarav Sharma',amount:'â‚¹12,500',date:'May 15',status:'Paid'},
+    {student:'Priya Patel',amount:'â‚¹12,500',date:'May 20',status:'Paid'},
+    {student:'Rohan Gupta',amount:'â‚¹12,500',date:'â€”',status:'Pending'},
+    {student:'Sneha Verma',amount:'â‚¹15,000',date:'May 10',status:'Paid'},
+    {student:'Arjun Singh',amount:'â‚¹15,000',date:'â€”',status:'Pending'},
+  ];
+  document.getElementById('fee-table').innerHTML=feeData.map(f=>`
+    <tr>
+      <td style="font-size:13px">${f.student}</td>
+      <td style="font-weight:500">${f.amount}</td>
+      <td style="font-size:12px;color:var(--text3)">${f.date}</td>
+      <td>${statusPill(f.status)}</td>
+    </tr>`).join('');
+  const progress=[
+    {cls:'Class 10',pct:85},{cls:'Class 11',pct:72},{cls:'Class 12',pct:91},
+    {cls:'Class 9',pct:68},{cls:'Class 8',pct:78},
+  ];
+  document.getElementById('fee-progress').innerHTML=progress.map(p=>`
+    <div class="fee-bar-wrap">
+      <div class="fee-bar-label"><span>${p.cls}</span><span>${p.pct}%</span></div>
+      <div class="fee-bar-track"><div class="fee-bar-fill" style="width:${p.pct}%;background:${p.pct>=85?'var(--green)':p.pct>=70?'var(--accent)':'var(--amber)'}"></div></div>
+    </div>`).join('');
+}
+
+function renderNotices(){
+  document.getElementById('notice-list').innerHTML=notices.map((n,i)=>`
+    <div class="notice-card" onclick="">
+      <div class="notice-card-header">
+        ${n.urgent?'<span class="pill pill-red">Urgent</span>':''}
+        <span class="pill pill-blue">${n.category}</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--text3)">${n.date}</span>
+      </div>
+      <div class="notice-title">${n.title}</div>
+      <div class="notice-body" style="margin-top:4px">${n.body}</div>
+    </div>`).join('');
+}
+
+function renderRecentStudents(){
+  document.getElementById('recent-students').innerHTML=students.slice(0,5).map((s,i)=>`
+    <tr>
+      <td><div class="td-user"><div class="avatar-sm" style="background:${avColor(i)}">${initials(s.name)}</div><div class="td-name">${s.name}</div></div></td>
+      <td><span class="pill pill-blue">${s.cls}</span></td>
+      <td>${statusPill(s.status)}</td>
+    </tr>`).join('');
+}
+
+function renderBar(containerId,labels,vals,colors_){
+  const max=Math.max(...vals.filter(v=>v>0))||1;
+  document.getElementById(containerId).innerHTML=labels.map((l,i)=>`
+    <div class="bar-col">
+      <div class="bar-val">${vals[i]||'â€”'}</div>
+      <div class="bar" style="height:${vals[i]?Math.max(8,vals[i]/max*80):4}px;background:${colors_?colors_[i%colors_.length]:(vals[i]?'var(--accent)':'var(--border)')};opacity:${vals[i]?1:.35}"></div>
+      <div class="bar-label">${l}</div>
+    </div>`).join('');
+}
+
+function renderExamChart(){
+  const labels=students.map(s=>s.name.split(' ')[0]);
+  renderBar('exam-chart',labels,examScores,examScores.map(v=>v>=75?'#22c55e':v>=50?'#f59e0b':'#ef4444'));
+}
+
+function goto(page,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el&&el.classList&&el.classList.contains('nav-item')) el.classList.add('active');
+  const titles={dashboard:'Dashboard',students:'Student Management',teachers:'Teacher Management',classes:'Class Management',subjects:'Subject Management',attendance:'Attendance',exams:'Exams & Results',fees:'Fee Management',notices:'Notice Board',settings:'Settings'};
+  document.getElementById('page-title').textContent=titles[page]||page;
+}
+
+function filterStudents(cls){
+  renderStudents(cls?students.filter(s=>s.cls.startsWith(cls)):students);
+}
+
+let searchTm;
+function handleSearch(v){
+  clearTimeout(searchTm);
+  searchTm=setTimeout(()=>{
+    if(!v){renderStudents(students);return;}
+    const q=v.toLowerCase();
+    renderStudents(students.filter(s=>s.name.toLowerCase().includes(q)||s.roll.toLowerCase().includes(q)||s.cls.toLowerCase().includes(q)||s.email.toLowerCase().includes(q)));
+  },200);
+}
+
+async function deleteStudent(id){
+  if(!confirm('Delete this student from database?'))return;
+  try{
+    await apiRequest(`${API_BASE}/${id}`,{method:'DELETE'});
+    showToast('Student deleted');
+    await loadStudents();
+  }catch(err){showToast(err.message,false);}
+}
+
+function modal(html){
+  document.getElementById('modal-root').innerHTML=`<div class="overlay">${html}</div>`;
+}
+function closeModal(){document.getElementById('modal-root').innerHTML='';}
+
+function openAddStudent(){
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Add New Student</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group"><div class="form-label">First Name</div><input id="add-first" class="form-input" placeholder="Aarav"></div>
+      <div class="form-group"><div class="form-label">Last Name</div><input id="add-last" class="form-input" placeholder="Sharma"></div>
+      <div class="form-group"><div class="form-label">Student ID</div><input id="add-id" class="form-input" placeholder="S-009"></div>
+      <div class="form-group"><div class="form-label">Class</div><select id="add-class" class="form-select"><option>Class 8-A</option><option>Class 9-A</option><option>Class 10-A</option><option>Class 11-A</option><option>Class 12-A</option></select></div>
+      <div class="form-group"><div class="form-label">Gender</div><select id="add-gender" class="form-select"><option>Male</option><option>Female</option></select></div>
+      <div class="form-group"><div class="form-label">Email</div><input id="add-email" class="form-input" placeholder="student@example.com"></div>
+      <div class="form-group form-full"><div class="form-label">Contact Number</div><input id="add-contact" class="form-input" placeholder="9876543210"></div>
+      <div class="form-group form-full" style="align-items:flex-start">
+        <div class="form-label">API Endpoint</div>
+        <code style="font-size:11px;color:var(--text3);background:var(--navy3);padding:4px 8px;border-radius:5px">POST /api/students</code>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addStudentSubmit()">Add Student</button>
+    </div>
+  </div>`);
+}
+
+async function addStudentSubmit(){
+  const first=document.getElementById('add-first').value.trim();
+  const last=document.getElementById('add-last').value.trim();
+  const id=document.getElementById('add-id').value.trim()||String(Date.now());
+  const email=document.getElementById('add-email').value.trim()||`${id}@school.local`;
+  const name=`${first} ${last}`.trim()||'New Student';
+  try{
+    await apiRequest(API_BASE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,name,email})});
+    showToast('Student saved');
+    closeModal();
+    await loadStudents();
+  }catch(err){showToast(err.message,false);}
+}
+
+function editStudent(id){
+  const s=students.find(st=>st.id===id);
+  if(!s)return;
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Edit Student</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Full Name</div><input class="form-input" value="${s.name}" id="edit-name"></div>
+      <div class="form-group"><div class="form-label">Student ID</div><input class="form-input" value="${s.roll}" disabled></div>
+      <div class="form-group"><div class="form-label">Class</div><input class="form-input" value="${s.cls}" disabled></div>
+      <div class="form-group"><div class="form-label">Email</div><input id="edit-email" class="form-input" value="${s.email}"></div>
+      <div class="form-group"><div class="form-label">Status</div><select class="form-select" disabled><option ${s.status==='Active'?'selected':''}>Active</option><option ${s.status==='Suspended'?'selected':''}>Suspended</option></select></div>
+      <div class="form-group form-full" style="align-items:flex-start">
+        <div class="form-label">API Endpoint</div>
+        <code style="font-size:11px;color:var(--text3);background:var(--navy3);padding:4px 8px;border-radius:5px">PUT /api/students/${s.id}</code>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateStudentSubmit('${s.id}')">Update Student</button>
+    </div>
+  </div>`);
+}
+
+
+async function updateStudentSubmit(id){
+  const name=document.getElementById('edit-name').value.trim();
+  const email=document.getElementById('edit-email').value.trim();
+  try{
+    await apiRequest(`${API_BASE}/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email})});
+    showToast('Student updated');
+    closeModal();
+    await loadStudents();
+  }catch(err){showToast(err.message,false);}
+}
+function openAddTeacher(){
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Add New Teacher</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Full Name</div><input class="form-input" placeholder="Dr. Name Surname"></div>
+      <div class="form-group"><div class="form-label">Employee ID</div><input class="form-input" placeholder="T-006"></div>
+      <div class="form-group"><div class="form-label">Subject</div><select class="form-select"><option>Mathematics</option><option>Physics</option><option>Chemistry</option><option>English</option><option>History</option></select></div>
+      <div class="form-group"><div class="form-label">Experience (years)</div><input class="form-input" type="number" placeholder="5"></div>
+      <div class="form-group form-full" style="align-items:flex-start">
+        <div class="form-label">API Endpoint</div>
+        <code style="font-size:11px;color:var(--text3);background:var(--navy3);padding:4px 8px;border-radius:5px">Teacher module demo</code>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal()">Add Teacher</button>
+    </div>
+  </div>`);
+}
+
+function openAddClass(){
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Create Class</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group"><div class="form-label">Class Name</div><input class="form-input" placeholder="Class 10-C"></div>
+      <div class="form-group"><div class="form-label">Section</div><input class="form-input" placeholder="C"></div>
+      <div class="form-group"><div class="form-label">Class Teacher</div><select class="form-select"><option>Dr. Rajeev Kumar</option><option>Mrs. Sunita Mehta</option><option>Mr. Ajay Tiwari</option></select></div>
+      <div class="form-group"><div class="form-label">Room Number</div><input class="form-input" placeholder="R-311"></div>
+      <div class="form-group"><div class="form-label">Max Strength</div><input class="form-input" type="number" placeholder="40"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal()">Create Class</button>
+    </div>
+  </div>`);
+}
+
+function openAddSubject(){
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Subject</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Subject Name</div><input class="form-input" placeholder="Biology"></div>
+      <div class="form-group"><div class="form-label">Subject Code</div><input class="form-input" placeholder="BIO-01"></div>
+      <div class="form-group"><div class="form-label">Type</div><select class="form-select"><option>Core</option><option>Elective</option><option>Optional</option></select></div>
+      <div class="form-group"><div class="form-label">Assign Teacher</div><select class="form-select"><option>Select Teacher</option><option>Dr. Rajeev Kumar</option><option>Mrs. Sunita Mehta</option></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal()">Add Subject</button>
+    </div>
+  </div>`);
+}
+
+function openAddExam(){
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Create Exam</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Exam Title</div><input class="form-input" placeholder="Math Final Exam 2026"></div>
+      <div class="form-group"><div class="form-label">Subject</div><select class="form-select"><option>Mathematics</option><option>Physics</option><option>Chemistry</option><option>English</option></select></div>
+      <div class="form-group"><div class="form-label">Class</div><select class="form-select"><option>Class 10-A</option><option>Class 9-B</option><option>Class 11-A</option></select></div>
+      <div class="form-group"><div class="form-label">Date</div><input class="form-input" type="date"></div>
+      <div class="form-group"><div class="form-label">Max Marks</div><input class="form-input" type="number" placeholder="100"></div>
+      <div class="form-group"><div class="form-label">Pass Marks</div><input class="form-input" type="number" placeholder="33"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal()">Create Exam</button>
+    </div>
+  </div>`);
+}
+
+function openAddFee(){
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Record Fee Payment</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Student</div><select class="form-select"><option>Aarav Sharma (S-001)</option><option>Priya Patel (S-002)</option><option>Rohan Gupta (S-003)</option></select></div>
+      <div class="form-group"><div class="form-label">Amount (â‚¹)</div><input class="form-input" type="number" placeholder="12500"></div>
+      <div class="form-group"><div class="form-label">Fee Type</div><select class="form-select"><option>Tuition</option><option>Hostel</option><option>Transport</option><option>Exam</option></select></div>
+      <div class="form-group"><div class="form-label">Payment Mode</div><select class="form-select"><option>Online</option><option>Cash</option><option>Cheque</option><option>DD</option></select></div>
+      <div class="form-group"><div class="form-label">Payment Date</div><input class="form-input" type="date"></div>
+      <div class="form-group"><div class="form-label">Receipt No</div><input class="form-input" placeholder="RCP-2026-001"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal()">Record Payment</button>
+    </div>
+  </div>`);
+}
+
+function openAddNotice(){
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Post Notice</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Title</div><input class="form-input" placeholder="Notice title"></div>
+      <div class="form-group"><div class="form-label">Category</div><select class="form-select"><option>Academic</option><option>Event</option><option>Holiday</option><option>Meeting</option><option>General</option></select></div>
+      <div class="form-group"><div class="form-label">Target</div><select class="form-select"><option>All</option><option>Students</option><option>Teachers</option><option>Parents</option></select></div>
+      <div class="form-group form-full"><div class="form-label">Content</div><textarea class="form-input" rows="4" placeholder="Notice contentâ€¦" style="resize:vertical"></textarea></div>
+      <div class="form-group" style="flex-direction:row;align-items:center;gap:8px">
+        <input type="checkbox" id="urgent-chk" style="width:auto">
+        <label for="urgent-chk" class="form-label" style="cursor:pointer">Mark as Urgent</label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal()">Publish Notice</button>
+    </div>
+  </div>`);
+}
+
+function saveAttendance(){
+  const toast=document.createElement('div');
+  toast.style.cssText='position:fixed;bottom:20px;right:20px;background:#22c55e;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:9999;font-family:DM Sans,sans-serif';
+  toast.textContent='âœ“ Attendance saved successfully';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),2500);
+}
+
+// Init
+renderStudents(students);
+loadStudents();
+renderTeachers();
+renderSubjects();
+renderClasses();
+renderAttCal();
+renderAttMarkTable();
+renderExams();
+renderGradeDist();
+renderFees();
+renderNotices();
+renderRecentStudents();
+renderBar('att-chart',attMonths,attValues);
+renderBar('fee-chart',attMonths,feeVals,['#6366f1','#22c55e','#f59e0b','#3b82f6','#a855f7','#6366f1']);
+renderExamChart();
+</script>
+<script>
+const dataApi = {
+  teachers: '/api/teachers',
+  classes: '/api/classes',
+  subjects: '/api/subjects',
+  exams: '/api/exams',
+  fees: '/api/fees',
+  notices: '/api/notices',
+  attendance: '/api/attendance'
+};
+
+const liveData = {
+  teachers: [],
+  classes: [],
+  subjects: [],
+  exams: [],
+  fees: [],
+  notices: []
+};
+
+function html(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  })[char]);
+}
+
+function valueOf(id) {
+  return document.getElementById(id).value.trim();
+}
+
+async function loadCollection(name, renderer) {
+  try {
+    liveData[name] = await apiRequest(dataApi[name]);
+    renderer();
+  } catch (error) {
+    showToast(`${name} load failed: ${error.message}`, false);
+  }
+}
+
+async function createRecord(name, body, renderer) {
+  await apiRequest(dataApi[name], {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  closeModal();
+  showToast('Saved successfully');
+  await loadCollection(name, renderer);
+}
+
+async function deleteRecord(name, id, renderer) {
+  if (!confirm('Delete this record?')) return;
+  await apiRequest(`${dataApi[name]}/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  showToast('Deleted successfully');
+  await loadCollection(name, renderer);
+}
+
+renderTeachers = function () {
+  const list = liveData.teachers;
+  document.getElementById('teacher-table').innerHTML = list.length ? list.map((t, i) => `
+    <tr>
+      <td><div class="td-user"><div class="avatar-sm" style="background:${avColor(i + 3)}">${html(initials(t.name || 'Teacher'))}</div><div><div class="td-name">${html(t.name)}</div></div></div></td>
+      <td style="font-size:12px;color:var(--text3);font-family:monospace">${html(t.eid)}</td>
+      <td><span class="pill pill-purple">${html(t.subject)}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${html(t.classes)}</td>
+      <td style="font-size:12px;color:var(--text2)">${html(t.exp)}</td>
+      <td>${statusPill(t.status || 'Active')}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteRecord('teachers','${html(t.id)}',renderTeachers)"><i class="ti ti-trash"></i></button></td>
+    </tr>`).join('') : '<tr><td colspan="7" style="color:var(--text3);text-align:center">No teachers saved yet.</td></tr>';
+};
+
+renderClasses = function () {
+  const list = liveData.classes;
+  document.getElementById('class-cards').innerHTML = list.length ? list.map((c) => `
+    <div class="stat-card" style="padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:14px;font-weight:600">${html(c.name)}</div>
+        <button class="btn btn-danger btn-sm" onclick="deleteRecord('classes','${html(c.id)}',renderClasses)"><i class="ti ti-trash"></i></button>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">${html(c.teacher)}</div>
+      <div style="font-size:22px;font-weight:600;margin-bottom:2px">${html(c.students ?? 0)}</div>
+      <div style="font-size:11px;color:var(--text3)">Students | Room ${html(c.room)}</div>
+    </div>`).join('') : '<div class="stat-card">No classes saved yet.</div>';
+};
+
+renderSubjects = function () {
+  const list = liveData.subjects;
+  document.getElementById('subject-table').innerHTML = list.length ? list.map((s) => `
+    <tr>
+      <td><div class="td-name">${html(s.name)}</div></td>
+      <td style="font-size:12px;color:var(--text3);font-family:monospace">${html(s.code)}</td>
+      <td style="font-size:12px;color:var(--text2)">${html(s.teacher)}</td>
+      <td style="font-size:12px;color:var(--text3)">${html(s.classes)}</td>
+      <td><span class="pill ${s.type === 'Core' ? 'pill-blue' : 'pill-amber'}">${html(s.type)}</span></td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteRecord('subjects','${html(s.id)}',renderSubjects)"><i class="ti ti-trash"></i></button></td>
+    </tr>`).join('') : '<tr><td colspan="6" style="color:var(--text3);text-align:center">No subjects saved yet.</td></tr>';
+};
+
+renderExams = function () {
+  const list = liveData.exams;
+  document.getElementById('exam-table').innerHTML = list.length ? list.map((exam) => `
+    <tr>
+      <td><div class="td-name">${html(exam.title)}</div></td>
+      <td style="font-size:12px">${html(exam.subject)}</td>
+      <td><span class="pill pill-blue">${html(exam.className)}</span></td>
+      <td style="font-size:12px;color:var(--text2)">${html(exam.date || 'Not scheduled')}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteRecord('exams','${html(exam.id)}',renderExams)"><i class="ti ti-trash"></i></button></td>
+    </tr>`).join('') : '<tr><td colspan="5" style="color:var(--text3);text-align:center">No exams saved yet.</td></tr>';
+};
+
+renderFees = function () {
+  const list = liveData.fees;
+  document.getElementById('fee-table').innerHTML = list.length ? list.map(f => `
+    <tr>
+      <td style="font-size:13px">${html(f.student)}</td>
+      <td style="font-weight:500">${html(f.amount)}</td>
+      <td style="font-size:12px;color:var(--text3)">${html(f.date || '-')}</td>
+      <td>${statusPill(f.status || 'Paid')}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteRecord('fees','${html(f.id)}',renderFees)"><i class="ti ti-trash"></i></button></td>
+    </tr>`).join('') : '<tr><td colspan="5" style="color:var(--text3);text-align:center">No fee payments saved yet.</td></tr>';
+  const paid = list.filter(f => (f.status || 'Paid') === 'Paid').length;
+  const pct = list.length ? Math.round((paid / list.length) * 100) : 0;
+  document.getElementById('fee-progress').innerHTML = `
+    <div class="fee-bar-wrap">
+      <div class="fee-bar-label"><span>Saved Payments</span><span>${pct}% paid</span></div>
+      <div class="fee-bar-track"><div class="fee-bar-fill" style="width:${pct}%;background:${pct >= 80 ? 'var(--green)' : 'var(--accent)'}"></div></div>
+    </div>`;
+};
+
+renderNotices = function () {
+  const list = liveData.notices;
+  document.getElementById('notice-list').innerHTML = list.length ? list.map(n => `
+    <div class="notice-card">
+      <div class="notice-card-header">
+        ${n.urgent ? '<span class="pill pill-red">Urgent</span>' : ''}
+        <span class="pill pill-blue">${html(n.category)}</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--text3)">${html(n.date)}</span>
+        <button class="btn btn-danger btn-sm" onclick="deleteRecord('notices','${html(n.id)}',renderNotices)"><i class="ti ti-trash"></i></button>
+      </div>
+      <div class="notice-title">${html(n.title)}</div>
+      <div class="notice-body" style="margin-top:4px">${html(n.body)}</div>
+    </div>`).join('') : '<div class="notice-card">No notices saved yet.</div>';
+};
+
+renderAttMarkTable = function () {
+  document.getElementById('att-mark-table').innerHTML = students.slice(0, 10).map((s, i) => `
+    <tr>
+      <td><div class="td-user"><div class="avatar-sm" style="background:${avColor(i)}">${html(initials(s.name))}</div><div class="td-name">${html(s.name)}</div></div></td>
+      <td>
+        <select class="form-select attendance-status" data-student-id="${html(s.id)}" data-student-name="${html(s.name)}" data-class-name="${html(s.cls)}" style="padding:4px 8px;font-size:12px">
+          <option value="Present" selected>Present</option>
+          <option value="Absent">Absent</option>
+          <option value="Holiday">Holiday</option>
+        </select>
+      </td>
+    </tr>`).join('');
+};
+
+openAddTeacher = function () {
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Add New Teacher</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Full Name</div><input id="teacher-name" class="form-input" placeholder="Dr. Name Surname"></div>
+      <div class="form-group"><div class="form-label">Employee ID</div><input id="teacher-eid" class="form-input" placeholder="T-006"></div>
+      <div class="form-group"><div class="form-label">Subject</div><input id="teacher-subject" class="form-input" placeholder="Mathematics"></div>
+      <div class="form-group"><div class="form-label">Classes</div><input id="teacher-classes" class="form-input" placeholder="9A,10A"></div>
+      <div class="form-group"><div class="form-label">Experience</div><input id="teacher-exp" class="form-input" placeholder="5 yrs"></div>
+      <div class="form-group"><div class="form-label">Status</div><select id="teacher-status" class="form-select"><option>Active</option><option>On Leave</option></select></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="addTeacherSubmit()">Add Teacher</button></div>
+  </div>`);
+};
+
+async function addTeacherSubmit() {
+  await createRecord('teachers', {
+    name: valueOf('teacher-name') || 'New Teacher',
+    eid: valueOf('teacher-eid') || `T-${Date.now()}`,
+    subject: valueOf('teacher-subject') || 'General',
+    classes: valueOf('teacher-classes') || 'Unassigned',
+    exp: valueOf('teacher-exp') || '0 yrs',
+    status: valueOf('teacher-status') || 'Active'
+  }, renderTeachers);
+}
+
+openAddClass = function () {
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Create Class</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group"><div class="form-label">Class Name</div><input id="class-name" class="form-input" placeholder="Class 10-C"></div>
+      <div class="form-group"><div class="form-label">Class Teacher</div><input id="class-teacher" class="form-input" placeholder="Dr. Rajeev Kumar"></div>
+      <div class="form-group"><div class="form-label">Room Number</div><input id="class-room" class="form-input" placeholder="R-311"></div>
+      <div class="form-group"><div class="form-label">Students</div><input id="class-students" class="form-input" type="number" placeholder="40"></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="addClassSubmit()">Create Class</button></div>
+  </div>`);
+};
+
+async function addClassSubmit() {
+  await createRecord('classes', {
+    name: valueOf('class-name') || 'New Class',
+    teacher: valueOf('class-teacher') || 'TBA',
+    room: valueOf('class-room') || 'TBA',
+    students: Number(valueOf('class-students') || 0)
+  }, renderClasses);
+}
+
+openAddSubject = function () {
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Subject</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Subject Name</div><input id="subject-name" class="form-input" placeholder="Biology"></div>
+      <div class="form-group"><div class="form-label">Subject Code</div><input id="subject-code" class="form-input" placeholder="BIO-01"></div>
+      <div class="form-group"><div class="form-label">Type</div><select id="subject-type" class="form-select"><option>Core</option><option>Elective</option><option>Optional</option></select></div>
+      <div class="form-group"><div class="form-label">Teacher</div><input id="subject-teacher" class="form-input" placeholder="Teacher name"></div>
+      <div class="form-group form-full"><div class="form-label">Classes</div><input id="subject-classes" class="form-input" placeholder="8,9,10"></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="addSubjectSubmit()">Add Subject</button></div>
+  </div>`);
+};
+
+async function addSubjectSubmit() {
+  await createRecord('subjects', {
+    name: valueOf('subject-name') || 'New Subject',
+    code: valueOf('subject-code') || `SUB-${Date.now()}`,
+    type: valueOf('subject-type') || 'Core',
+    teacher: valueOf('subject-teacher') || 'TBA',
+    classes: valueOf('subject-classes') || 'Unassigned'
+  }, renderSubjects);
+}
+
+openAddExam = function () {
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Create Exam</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Exam Title</div><input id="exam-title" class="form-input" placeholder="Math Final Exam 2026"></div>
+      <div class="form-group"><div class="form-label">Subject</div><input id="exam-subject" class="form-input" placeholder="Mathematics"></div>
+      <div class="form-group"><div class="form-label">Class</div><input id="exam-class" class="form-input" placeholder="Class 10-A"></div>
+      <div class="form-group"><div class="form-label">Date</div><input id="exam-date" class="form-input" type="date"></div>
+      <div class="form-group"><div class="form-label">Max Marks</div><input id="exam-max" class="form-input" type="number" placeholder="100"></div>
+      <div class="form-group"><div class="form-label">Pass Marks</div><input id="exam-pass" class="form-input" type="number" placeholder="33"></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="addExamSubmit()">Create Exam</button></div>
+  </div>`);
+};
+
+async function addExamSubmit() {
+  await createRecord('exams', {
+    title: valueOf('exam-title') || 'New Exam',
+    subject: valueOf('exam-subject') || 'General',
+    className: valueOf('exam-class') || 'All Classes',
+    date: valueOf('exam-date'),
+    maxMarks: Number(valueOf('exam-max') || 100),
+    passMarks: Number(valueOf('exam-pass') || 33)
+  }, renderExams);
+}
+
+openAddFee = function () {
+  const options = students.map(s => `<option value="${html(s.name)} (${html(s.roll)})">${html(s.name)} (${html(s.roll)})</option>`).join('');
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Record Fee Payment</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Student</div><select id="fee-student" class="form-select">${options}</select></div>
+      <div class="form-group"><div class="form-label">Amount</div><input id="fee-amount" class="form-input" type="number" placeholder="12500"></div>
+      <div class="form-group"><div class="form-label">Fee Type</div><select id="fee-type" class="form-select"><option>Tuition</option><option>Hostel</option><option>Transport</option><option>Exam</option></select></div>
+      <div class="form-group"><div class="form-label">Payment Mode</div><select id="fee-mode" class="form-select"><option>Online</option><option>Cash</option><option>Cheque</option><option>DD</option></select></div>
+      <div class="form-group"><div class="form-label">Payment Date</div><input id="fee-date" class="form-input" type="date"></div>
+      <div class="form-group"><div class="form-label">Receipt No</div><input id="fee-receipt" class="form-input" placeholder="RCP-2026-001"></div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="addFeeSubmit()">Record Payment</button></div>
+  </div>`);
+};
+
+async function addFeeSubmit() {
+  await createRecord('fees', {
+    student: valueOf('fee-student') || 'Student',
+    amount: valueOf('fee-amount') || '0',
+    feeType: valueOf('fee-type'),
+    paymentMode: valueOf('fee-mode'),
+    date: valueOf('fee-date') || new Date().toISOString().slice(0, 10),
+    receiptNo: valueOf('fee-receipt') || `RCP-${Date.now()}`,
+    status: 'Paid'
+  }, renderFees);
+}
+
+openAddNotice = function () {
+  modal(`<div class="modal">
+    <div class="modal-header"><div class="modal-title">Post Notice</div><button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button></div>
+    <div class="form-grid">
+      <div class="form-group form-full"><div class="form-label">Title</div><input id="notice-title" class="form-input" placeholder="Notice title"></div>
+      <div class="form-group"><div class="form-label">Category</div><select id="notice-category" class="form-select"><option>Academic</option><option>Event</option><option>Holiday</option><option>Meeting</option><option>General</option></select></div>
+      <div class="form-group"><div class="form-label">Target</div><select id="notice-target" class="form-select"><option>All</option><option>Students</option><option>Teachers</option><option>Parents</option></select></div>
+      <div class="form-group form-full"><div class="form-label">Content</div><textarea id="notice-body" class="form-input" rows="4" placeholder="Notice content" style="resize:vertical"></textarea></div>
+      <div class="form-group" style="flex-direction:row;align-items:center;gap:8px">
+        <input type="checkbox" id="notice-urgent" style="width:auto">
+        <label for="notice-urgent" class="form-label" style="cursor:pointer">Mark as Urgent</label>
+      </div>
+    </div>
+    <div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="addNoticeSubmit()">Publish Notice</button></div>
+  </div>`);
+};
+
+async function addNoticeSubmit() {
+  await createRecord('notices', {
+    title: valueOf('notice-title') || 'New Notice',
+    category: valueOf('notice-category') || 'General',
+    target: valueOf('notice-target') || 'All',
+    body: valueOf('notice-body') || '',
+    urgent: document.getElementById('notice-urgent').checked,
+    date: new Date().toISOString().slice(0, 10)
+  }, renderNotices);
+}
+
+saveAttendance = async function () {
+  const dateInput = document.querySelector('#page-attendance input[type="date"]');
+  const date = dateInput && dateInput.value ? dateInput.value : new Date().toISOString().slice(0, 10);
+  const records = Array.from(document.querySelectorAll('.attendance-status')).map(select => ({
+    studentId: select.dataset.studentId,
+    studentName: select.dataset.studentName,
+    className: select.dataset.className,
+    date,
+    status: select.value
+  }));
+  await apiRequest(dataApi.attendance, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(records)
+  });
+  showToast('Attendance saved successfully');
+};
+
+async function loadAllSavedData() {
+  await Promise.all([
+    loadCollection('teachers', renderTeachers),
+    loadCollection('classes', renderClasses),
+    loadCollection('subjects', renderSubjects),
+    loadCollection('exams', renderExams),
+    loadCollection('fees', renderFees),
+    loadCollection('notices', renderNotices)
+  ]);
+  renderAttMarkTable();
+}
+
+loadAllSavedData();
+</script>
+
+
+
+
+
