@@ -11,4 +11,9 @@ public class FrontendController {
     public RedirectView app() {
         return new RedirectView("/school_management_system.html");
     }
+
+    @GetMapping("/portfolio")
+    public RedirectView portfolio() {
+        return new RedirectView("/portfolio.html");
+    }
 }

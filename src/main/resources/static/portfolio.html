@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syed Shahrukh ALI | Portfolio</title>
+    <style>
+        :root {
+            --ink: #111827;
+            --muted: #5f6b7a;
+            --paper: #f7f4ee;
+            --panel: #ffffff;
+            --line: rgba(17, 24, 39, 0.13);
+            --teal: #147c72;
+            --coral: #de5b45;
+            --gold: #b8872f;
+            --plum: #51365f;
+            --shadow: 0 18px 45px rgba(17, 24, 39, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--ink);
+            background: var(--paper);
+            line-height: 1.55;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 92vh;
+            display: grid;
+            align-items: center;
+            overflow: hidden;
+            color: #fffdf7;
+            background: #101820;
+        }
+
+        #aiCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(90deg, rgba(10, 15, 20, 0.86), rgba(10, 15, 20, 0.43) 54%, rgba(10, 15, 20, 0.24)),
+                radial-gradient(circle at 82% 18%, rgba(222, 91, 69, 0.35), transparent 26%),
+                radial-gradient(circle at 73% 84%, rgba(20, 124, 114, 0.28), transparent 32%);
+            pointer-events: none;
+        }
+
+        .nav {
+            position: absolute;
+            z-index: 2;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 24px clamp(20px, 5vw, 72px);
+        }
+
+        .brand {
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: clamp(14px, 3vw, 34px);
+            align-items: center;
+            font-size: 0.93rem;
+            color: rgba(255, 253, 247, 0.82);
+        }
+
+        .nav-links a:hover {
+            color: #fffdf7;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            width: min(1120px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 112px 0 72px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 253, 247, 0.8);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 36px;
+            height: 2px;
+            background: var(--coral);
+        }
+
+        h1 {
+            margin: 18px 0 18px;
+            max-width: 900px;
+            font-size: clamp(3.1rem, 8vw, 7.5rem);
+            line-height: 0.95;
+            letter-spacing: 0;
+        }
+
+        .hero-copy {
+            max-width: 660px;
+            color: rgba(255, 253, 247, 0.82);
+            font-size: clamp(1.05rem, 2vw, 1.3rem);
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 34px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0 20px;
+            border: 1px solid rgba(255, 253, 247, 0.35);
+            border-radius: 6px;
+            font-weight: 800;
+            transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+        }
+
+        .button.primary {
+            background: #fffdf7;
+            color: #101820;
+            border-color: #fffdf7;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button.dark {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: #fff;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1px;
+            width: min(780px, 100%);
+            margin-top: 72px;
+            background: rgba(255, 253, 247, 0.18);
+            border: 1px solid rgba(255, 253, 247, 0.18);
+        }
+
+        .stat {
+            padding: 22px;
+            background: rgba(16, 24, 32, 0.48);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat strong {
+            display: block;
+            font-size: clamp(1.55rem, 3vw, 2.2rem);
+        }
+
+        .stat span {
+            color: rgba(255, 253, 247, 0.72);
+            font-size: 0.9rem;
+        }
+
+        section {
+            padding: clamp(64px, 9vw, 112px) clamp(20px, 5vw, 72px);
+        }
+
+        .section-inner {
+            width: min(1120px, 100%);
+            margin: 0 auto;
+        }
+
+        .section-heading {
+            display: grid;
+            grid-template-columns: minmax(0, 0.9fr) minmax(280px, 1fr);
+            gap: 34px;
+            align-items: end;
+            margin-bottom: 34px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: clamp(2rem, 4.2vw, 4rem);
+            line-height: 1.02;
+            letter-spacing: 0;
+        }
+
+        .section-heading p,
+        .about p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 1.02rem;
+        }
+
+        .about {
+            background: #fffdf7;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+            gap: 34px;
+            align-items: stretch;
+        }
+
+        .portrait {
+            min-height: 420px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--shadow);
+            background:
+                linear-gradient(135deg, rgba(20, 124, 114, 0.92), rgba(81, 54, 95, 0.88)),
+                repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 14px);
+        }
+
+        .portrait::before {
+            content: "SS";
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            font-size: clamp(7rem, 18vw, 14rem);
+            font-weight: 900;
+            color: rgba(255, 253, 247, 0.16);
+        }
+
+        .portrait-content {
+            position: absolute;
+            left: 28px;
+            right: 28px;
+            bottom: 28px;
+            color: #fffdf7;
+        }
+
+        .portrait-content h3 {
+            margin: 0 0 8px;
+            font-size: 1.7rem;
+        }
+
+        .portrait-content p {
+            color: rgba(255, 253, 247, 0.78);
+        }
+
+        .about-copy {
+            display: grid;
+            gap: 18px;
+            align-content: center;
+        }
+
+        .pill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .pill {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 9px 13px;
+            background: #fff;
+            color: #253041;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .work {
+            background: #e9edf0;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .project-card {
+            min-height: 270px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 26px;
+            padding: 24px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel);
+            box-shadow: 0 12px 28px rgba(17, 24, 39, 0.08);
+        }
+
+        .project-card h3,
+        .timeline-item h3 {
+            margin: 0 0 10px;
+            font-size: 1.22rem;
+        }
+
+        .project-card p,
+        .timeline-item p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .project-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .project-actions .button {
+            min-height: 40px;
+            padding: 0 14px;
+            border-color: var(--line);
+            color: var(--ink);
+            font-size: 0.9rem;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            padding: 7px 10px;
+            border-radius: 5px;
+            color: #fff;
+            background: var(--teal);
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+
+        .project-card:nth-child(2) .tag {
+            background: var(--coral);
+        }
+
+        .project-card:nth-child(3) .tag {
+            background: var(--plum);
+        }
+
+        .skills {
+            background: #fffdf7;
+        }
+
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            border-top: 1px solid var(--line);
+            border-left: 1px solid var(--line);
+        }
+
+        .skill {
+            min-height: 170px;
+            padding: 22px;
+            border-right: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.48);
+        }
+
+        .skill-number {
+            color: var(--gold);
+            font-weight: 900;
+            margin-bottom: 42px;
+        }
+
+        .skill h3 {
+            margin: 0 0 8px;
+        }
+
+        .skill p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .timeline {
+            background: #101820;
+            color: #fffdf7;
+        }
+
+        .timeline .section-heading p {
+            color: rgba(255, 253, 247, 0.7);
+        }
+
+        .timeline-list {
+            display: grid;
+            gap: 1px;
+            background: rgba(255, 253, 247, 0.14);
+            border: 1px solid rgba(255, 253, 247, 0.14);
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 28px;
+            padding: 26px;
+            background: rgba(255, 253, 247, 0.05);
+        }
+
+        .timeline-item time {
+            color: #f1b95f;
+            font-weight: 900;
+        }
+
+        .timeline-item p {
+            color: rgba(255, 253, 247, 0.72);
+        }
+
+        .contact {
+            background: var(--paper);
+        }
+
+        .contact-band {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 28px;
+            padding: clamp(28px, 5vw, 48px);
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+        }
+
+        .contact-band h2 {
+            font-size: clamp(2rem, 5vw, 4.5rem);
+        }
+
+        .contact-band p {
+            max-width: 650px;
+            color: var(--muted);
+        }
+
+        .contact-actions {
+            display: grid;
+            gap: 12px;
+            min-width: 220px;
+        }
+
+        .contact-actions .button {
+            color: var(--ink);
+            border-color: var(--line);
+        }
+
+        .contact-actions .button.primary {
+            background: var(--ink);
+            color: #fff;
+            border-color: var(--ink);
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 12px;
+            min-width: min(360px, 100%);
+        }
+
+        .field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .field label {
+            color: #344054;
+            font-size: 0.82rem;
+            font-weight: 800;
+        }
+
+        .field input,
+        .field textarea {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 12px 13px;
+            color: var(--ink);
+            background: #fffdf7;
+            font: inherit;
+            outline: none;
+        }
+
+        .field textarea {
+            min-height: 108px;
+            resize: vertical;
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(20, 124, 114, 0.14);
+        }
+
+        .form-status {
+            min-height: 22px;
+            color: var(--teal);
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        footer {
+            padding: 26px clamp(20px, 5vw, 72px);
+            color: var(--muted);
+            border-top: 1px solid var(--line);
+            background: #fffdf7;
+        }
+
+        .footer-inner {
+            width: min(1120px, 100%);
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 860px) {
+            .nav {
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .hero-stats,
+            .section-heading,
+            .about-grid,
+            .project-grid,
+            .skill-grid,
+            .contact-band {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .portrait {
+                min-height: 320px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .hero {
+                min-height: 96vh;
+            }
+
+            .nav {
+                position: relative;
+                background: rgba(16, 24, 32, 0.84);
+            }
+
+            .hero-content {
+                padding-top: 48px;
+            }
+
+            .nav-links a:nth-child(2) {
+                display: none;
+            }
+
+            h1 {
+                font-size: clamp(2.8rem, 17vw, 4.2rem);
+            }
+
+            .stat,
+            .project-card,
+            .skill,
+            .timeline-item {
+                padding: 20px;
+            }
+
+            .contact-actions {
+                min-width: 0;
+            }
+
+            .project-actions .button {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .button {
+                transition: none;
+            }
+
+            .button:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="hero" id="top">
+        <canvas id="aiCanvas" aria-hidden="true"></canvas>
+        <nav class="nav" aria-label="Main navigation">
+            <a class="brand" href="#top">Syed Shahrukh AI</a>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#work">Work</a>
+                <a href="#skills">Skills</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </nav>
+
+        <div class="hero-content">
+            <span class="eyebrow">AI builder and full-stack learner</span>
+            <h1>Syed Shahrukh AI</h1>
+            <p class="hero-copy">
+                I build practical software with clean interfaces, useful automation, and AI-assisted workflows that turn ideas into working products.
+            </p>
+            <div class="actions">
+                <a class="button primary" href="#work">View Work</a>
+                <a class="button" href="#contact">Start a Project</a>
+            </div>
+
+            <div class="hero-stats" aria-label="Portfolio highlights">
+                <div class="stat">
+                    <strong>AI</strong>
+                    <span>Automation focused</span>
+                </div>
+                <div class="stat">
+                    <strong>Full Stack</strong>
+                    <span>Frontend and APIs</span>
+                </div>
+                <div class="stat">
+                    <strong>Java</strong>
+                    <span>Spring Boot projects</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="about" id="about">
+            <div class="section-inner about-grid">
+                <div class="portrait" role="img" aria-label="Abstract monogram portrait for Syed Shahrukh AI">
+                    <div class="portrait-content">
+                        <h3>Syed Shahrukh AI</h3>
+                        <p>Designing focused digital tools for schools, teams, and modern learners.</p>
+                    </div>
+                </div>
+                <div class="about-copy">
+                    <div>
+                        <h2>Building useful systems with AI thinking.</h2>
+                    </div>
+                    <p>
+                        My work combines backend development, frontend experience design, and AI-powered productivity. I enjoy creating software that feels direct, fast, and easy to understand.
+                    </p>
+                    <p>
+                        This portfolio highlights the direction of my work: school platforms, dashboards, API systems, automation flows, and clean user interfaces.
+                    </p>
+                    <div class="pill-list" aria-label="Focus areas">
+                        <span class="pill">AI tools</span>
+                        <span class="pill">Spring Boot</span>
+                        <span class="pill">Student systems</span>
+                        <span class="pill">Web apps</span>
+                        <span class="pill">API design</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="work" id="work">
+            <div class="section-inner">
+                <div class="section-heading">
+                    <h2>Selected work</h2>
+                    <p>Project ideas shaped around real workflows: keeping data organized, making tasks faster, and giving users a simple place to act.</p>
+                </div>
+
+                <div class="project-grid">
+                    <article class="project-card">
+                        <div>
+                            <h3>School Management System</h3>
+                            <p>A Spring Boot student management platform with modules for students, teachers, classes, subjects, exams, fees, attendance, and notices.</p>
+                            <div class="project-actions">
+                                <a class="button dark" href="school_management_system.html">Open App</a>
+                                <a class="button" href="https://github.com/alishahrukh719/school-management-system" target="_blank" rel="noreferrer">GitHub</a>
+                            </div>
+                        </div>
+                        <div class="tag-row">
+                            <span class="tag">Java</span>
+                            <span class="tag">Spring Boot</span>
+                            <span class="tag">H2</span>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <div>
+                            <h3>AI Workflow Assistant</h3>
+                            <p>A concept for turning repeated admin work into guided AI actions, from draft generation to structured task tracking.</p>
+                            <div class="project-actions">
+                                <a class="button" href="#contact">Discuss Build</a>
+                            </div>
+                        </div>
+                        <div class="tag-row">
+                            <span class="tag">AI</span>
+                            <span class="tag">Automation</span>
+                            <span class="tag">UX</span>
+                        </div>
+                    </article>
+
+                    <article class="project-card">
+                        <div>
+                            <h3>Data Dashboard</h3>
+                            <p>A reporting interface concept for viewing school activity, payment status, attendance trends, and operational summaries.</p>
+                            <div class="project-actions">
+                                <a class="button" href="school_management_system.html">View Demo</a>
+                            </div>
+                        </div>
+                        <div class="tag-row">
+                            <span class="tag">Dashboard</span>
+                            <span class="tag">Analytics</span>
+                            <span class="tag">UI</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="skills" id="skills">
+            <div class="section-inner">
+                <div class="section-heading">
+                    <h2>Skills</h2>
+                    <p>A compact toolkit for building, improving, and presenting software projects with confidence.</p>
+                </div>
+
+                <div class="skill-grid">
+                    <div class="skill">
+                        <div class="skill-number">01</div>
+                        <h3>Backend APIs</h3>
+                        <p>REST endpoints, repositories, validation, and database-backed Java services.</p>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-number">02</div>
+                        <h3>Frontend UI</h3>
+                        <p>Responsive pages, dashboards, forms, and clear browser-based workflows.</p>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-number">03</div>
+                        <h3>AI Productivity</h3>
+                        <p>Prompting, code support, automation ideas, and AI-assisted planning.</p>
+                    </div>
+                    <div class="skill">
+                        <div class="skill-number">04</div>
+                        <h3>Project Delivery</h3>
+                        <p>Testing, GitHub publishing, documentation, and clean project handoff.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="timeline">
+            <div class="section-inner">
+                <div class="section-heading">
+                    <h2>Direction</h2>
+                    <p>The portfolio is set up to grow with new projects, case studies, and AI experiments.</p>
+                </div>
+
+                <div class="timeline-list">
+                    <article class="timeline-item">
+                        <time>Now</time>
+                        <div>
+                            <h3>Building a strong project base</h3>
+                            <p>Creating complete applications with backend logic, frontend pages, database support, and GitHub-ready structure.</p>
+                        </div>
+                    </article>
+                    <article class="timeline-item">
+                        <time>Next</time>
+                        <div>
+                            <h3>Adding smarter workflows</h3>
+                            <p>Exploring AI features that can assist students, teachers, administrators, and small teams.</p>
+                        </div>
+                    </article>
+                    <article class="timeline-item">
+                        <time>Future</time>
+                        <div>
+                            <h3>Publishing real case studies</h3>
+                            <p>Turning each project into a clear story with goals, stack, screenshots, decisions, and outcomes.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact" id="contact">
+            <div class="section-inner">
+                <div class="contact-band">
+                    <div>
+                        <h2>Let us build something useful.</h2>
+                        <p>
+                            Available for student projects, portfolio improvements, school tools, AI experiments, and practical web applications.
+                        </p>
+                        <div class="contact-actions" style="margin-top:18px">
+                            <a class="button primary" href="school_management_system.html">Open School App</a>
+                            <a class="button" href="https://github.com/alishahrukh719/school-management-system" target="_blank" rel="noreferrer">GitHub Project</a>
+                        </div>
+                    </div>
+                    <form class="contact-form" id="contactForm">
+                        <div class="field">
+                            <label for="name">Name</label>
+                            <input id="name" name="name" autocomplete="name" required>
+                        </div>
+                        <div class="field">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        <button class="button dark" type="submit">Save Message</button>
+                        <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <span>Syed Shahrukh AI - <span id="year">2026</span></span>
+            <span>Portfolio built with HTML, CSS, JavaScript, and Spring Boot static hosting.</span>
+        </div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById("aiCanvas");
+        const context = canvas.getContext("2d");
+        const colors = ["#28b8a7", "#de5b45", "#f1b95f", "#9b6fb2"];
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let particles = [];
+        let width = 0;
+        let height = 0;
+        let animationFrameId = 0;
+
+        function resize() {
+            const ratio = window.devicePixelRatio || 1;
+            width = canvas.clientWidth;
+            height = canvas.clientHeight;
+            canvas.width = Math.floor(width * ratio);
+            canvas.height = Math.floor(height * ratio);
+            context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+            const count = Math.max(42, Math.floor((width * height) / 23000));
+            particles = Array.from({ length: count }, (_, index) => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.45,
+                vy: (Math.random() - 0.5) * 0.45,
+                radius: 1.6 + Math.random() * 2.8,
+                color: colors[index % colors.length]
+            }));
+        }
+
+        function draw() {
+            context.clearRect(0, 0, width, height);
+            context.fillStyle = "#101820";
+            context.fillRect(0, 0, width, height);
+
+            particles.forEach((particle, index) => {
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+
+                if (particle.x < -20) particle.x = width + 20;
+                if (particle.x > width + 20) particle.x = -20;
+                if (particle.y < -20) particle.y = height + 20;
+                if (particle.y > height + 20) particle.y = -20;
+
+                for (let nextIndex = index + 1; nextIndex < particles.length; nextIndex += 1) {
+                    const next = particles[nextIndex];
+                    const dx = particle.x - next.x;
+                    const dy = particle.y - next.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        context.strokeStyle = `rgba(255, 253, 247, ${0.12 * (1 - distance / 150)})`;
+                        context.lineWidth = 1;
+                        context.beginPath();
+                        context.moveTo(particle.x, particle.y);
+                        context.lineTo(next.x, next.y);
+                        context.stroke();
+                    }
+                }
+
+                context.fillStyle = particle.color;
+                context.beginPath();
+                context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                context.fill();
+            });
+
+            if (!prefersReducedMotion) {
+                animationFrameId = requestAnimationFrame(draw);
+            }
+        }
+
+        resize();
+        draw();
+        window.addEventListener("resize", () => {
+            cancelAnimationFrame(animationFrameId);
+            resize();
+            draw();
+        });
+
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        document.getElementById("contactForm").addEventListener("submit", (event) => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const name = form.elements.name.value.trim();
+            const message = form.elements.message.value.trim();
+            const status = document.getElementById("formStatus");
+
+            if (!name || !message) {
+                status.textContent = "Please fill both fields.";
+                return;
+            }
+
+            const savedMessages = JSON.parse(localStorage.getItem("portfolioMessages") || "[]");
+            savedMessages.push({
+                name,
+                message,
+                createdAt: new Date().toISOString()
+            });
+            localStorage.setItem("portfolioMessages", JSON.stringify(savedMessages));
+
+            form.reset();
+            status.textContent = "Message saved in this browser.";
+        });
+    </script>
+</body>
+</html>

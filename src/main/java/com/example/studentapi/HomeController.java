@@ -14,6 +14,7 @@ public class HomeController {
                 "message", "Student API is running",
                 "students", "/api/students",
                 "frontend", "/app",
+                "portfolio", "/portfolio",
                 "sampleStudent", "/api/students/sample-id");
     }
 }
